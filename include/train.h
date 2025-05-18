@@ -12,8 +12,8 @@ class Train {
         Car* prev;
         explicit Car(bool l = false) : light(l), next(this), prev(this) {}
     };
-    int countOp;
     Car* first;
+    int countOp;
  public:
     Train();
     ~Train();

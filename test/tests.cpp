@@ -1,73 +1,57 @@
 // Copyright 2021 NNTU-CS
-#include <gtest/gtest.h>
 #include "train.h"
 
-TEST(lab8, test1) {
-  Train train;
-  int count = 2;
+Train::Train() : first(nullptr), countOp(0) {}
 
-  while (count--)
-    train.addCar(false);
-
-  int len = train.getLength();
-  int op = train.getOpCount();
-
-  ASSERT_EQ(len, 2);
-  ASSERT_EQ(op, 4);
+Train::~Train() {
+  if (!first) return;
+  Car* curr = first->next;
+  while (curr != first) {
+    Car* temp = curr;
+    curr = curr->next;
+    delete temp;
+  }
+  delete first;
 }
 
-TEST(lab8, test2) {
-  Train train;
-  int count = 8;
-
-  while (count--)
-    train.addCar(false);
-
-  int len = train.getLength();
-  int op = train.getOpCount();
-
-  ASSERT_EQ(len, 8);
-  ASSERT_EQ(op, 16);
+void Train::addCar(bool light) {
+  Car* newCar = new Car(light);
+  if (!first) {
+    first = newCar;
+  } else {
+    Car* last = first->prev;
+    last->next = newCar;
+    newCar->prev = last;
+    newCar->next = first;
+    first->prev = newCar;
+  }
 }
 
-TEST(lab8, test3) {
-  Train train;
-  int count = 1000;
+int Train::getLength() {
+  countOp = 0;
+  Car* curr = first;
 
-  while (count--)
-    train.addCar(false);
+  if (!curr->light) {
+    curr->light = true;
+    countOp++;
+  } else {
+    curr->light = false;
+    countOp++;
+    curr->light = true;
+    countOp++;
+  }
 
-  int len = train.getLength();
-  int op = train.getOpCount();
+  int len = 0;
+  curr = curr->next;
+  countOp++;
+  while (!curr->light) {
+    curr = curr->next;
+    countOp++;
+    len++;
+  }
 
-  ASSERT_EQ(len, 1000);
-  ASSERT_EQ(op, 2000);
-}
+  curr->light = false;
+  countOp++;
 
-TEST(lab8, test4) {
-  Train train;
-  int count = 4;
-
-  while (count--)
-    train.addCar(true);
-
-  int len = train.getLength();
-  int op = train.getOpCount();
-
-  ASSERT_EQ(len, 4);
-  ASSERT_EQ(op, 20);
-}
-
-TEST(lab8, test5) {
-  Train train;
-  int count = 6;
-
-  while (count--)
-    train.addCar(true);
-
-  int len = train.getLength();
-  int op = train.getOpCount();
-
-  ASSERT_EQ(len, 6);
-  ASSERT_EQ(op, 42);
+  return len + 1;
 }

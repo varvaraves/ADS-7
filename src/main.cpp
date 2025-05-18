@@ -1,4 +1,5 @@
 // Copyright 2022 NNTU-CS
+#include <iostream>
 #include "train.h"
 
 int main() {
